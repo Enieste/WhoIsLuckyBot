@@ -9,12 +9,17 @@
   },
   "private": true,
   "dependencies": {
+    "@prisma/client": "^4.15.0",
+    "@types/lodash": "^4.14.195",
     "axios": "^1.0.0",
     "express": "~4.18.1",
+    "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.61.0",
+    "sqlite3": "^5.1.6",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@nx-tools/nx-prisma": "^4.0.3",
     "@nx/esbuild": "16.3.2",
     "@nx/eslint-plugin": "16.3.2",
     "@nx/jest": "16.3.2",
