@@ -1,32 +1,18 @@
 {
-  "compileOnSave": false,
+
+  "extends": "../tsconfig.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
     "strict": true,
-    "resolveJsonModule": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2020", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@currents/graphgen/*": ["libs/graphgen/src/lib/*"],
-      "@currents/shared-api-types/*": ["libs/shared-api-types/src/lib/*"],
-      "@currents/utils/*": ["libs/utils/src/lib/*"],
-      "@currents/rust_napi_template": ["libs/rust_napi_template/index.d.ts"]
-    }
-  },
-  "exclude": ["node_modules", "tmp"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
+    "esModuleInterop": true
   }
 }
