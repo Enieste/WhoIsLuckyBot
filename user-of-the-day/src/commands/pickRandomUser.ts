@@ -2,10 +2,11 @@ import TelegramBot from 'node-telegram-bot-api';
 import type { CleanedMessage, Designation } from '../utils/types';
 import { LOSER, WINNER } from '../utils/types';
 import { addCount, prisma, updateUser } from '../db';
-import { getRandomFromNumber } from '../utils';
+import {capitalize, getRandomFromNumber} from '../utils';
 import { startOfDay, isEqual } from 'date-fns';
 
 let pickingUserNow = false;
+const loserTitle = process.env.LOSER_TITLE || 'неудачник';
 
 type RandomUserPickResult =
   | {
@@ -31,8 +32,8 @@ export const pickRandomUser =
     title: Designation
   ): Promise<RandomUserPickResult> => {
     const getRandomUserForChat = async (
-      chatId: number
-    ): Promise<number | null> => {
+      chatId: bigint
+    ): Promise<bigint | null> => {
       // cache logic
       const chat = await prisma.chat.findUnique({
         where: {
@@ -52,7 +53,7 @@ export const pickRandomUser =
 
       await bot.sendMessage(
         msg.chat.id,
-        `Начинаю поиск ${title === LOSER ? 'неудачника' : 'котика'} дня...`
+        `Начинаю поиск ${title === LOSER ? loserTitle + 'a' : 'котика'} дня...`
       );
       const gameParticipants = await prisma.userChatStats.findMany({
         where: {
@@ -68,7 +69,7 @@ export const pickRandomUser =
         await Promise.all([
           addCount(tx)({
             userId: randomUser.userId,
-            chatId: msg.chat.id,
+            chatId: BigInt(msg.chat.id),
             title,
           }),
           tx.chat.update({
@@ -103,14 +104,14 @@ export const pickRandomUser =
           message: 'Sorry no users found',
         };
       const chatId = msg.chat.id;
-      const randomUserId = await getRandomUserForChat(chatId);
+      const randomUserId = await getRandomUserForChat(BigInt(chatId));
       if (randomUserId === null)
         return {
           tag: 'error',
           message: 'No users to choose from',
         };
 
-      const selectedUser = await bot.getChatMember(chatId, randomUserId);
+      const selectedUser = await bot.getChatMember(chatId, Number(randomUserId));
       if (selectedUser.status === 'left') {
         await updateUser({
           userId: selectedUser.user.id,
@@ -151,4 +152,4 @@ const getDude =
   };
 
 export const getWinner = getDude(WINNER, '🐈 Котик дня');
-export const getLoser = getDude(LOSER, '🌈 Неудачник дня');
+export const getLoser = getDude(LOSER, `🌈 ${capitalize(loserTitle)} дня`);

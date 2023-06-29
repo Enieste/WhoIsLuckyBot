@@ -1,10 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { LOSER, Designation } from '../utils/types';
 
+const dbUrl = process.env.DATABASE_URL;
+if (!dbUrl) throw new Error('process.env.DATABASE_URL is empty');
 export const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: 'file:dev.db',
+      url: process.env.DATABASE_URL
     },
   },
 });
@@ -60,8 +62,8 @@ export const addCount = (tx: Pick<PrismaClient, 'userChatStats'>) => async ({
   chatId,
   title,
 }: {
-  userId: number;
-  chatId: number;
+  userId: bigint;
+  chatId: bigint;
   title: Designation;
 }) => {
   const uniqWhere = {

@@ -6,6 +6,7 @@ import { getLoser, getWinner, pickRandomUser } from './commands/pickRandomUser';
 import { showStats } from './commands/showStats';
 
 const token = process.env.TOKEN;
+
 if (!token) throw new Error('no process.env.TOKEN');
 
 const cleanMsgObj = (msg: ValidMessage): CleanedMessage =>
@@ -17,7 +18,7 @@ export const bot = new TelegramBot(token, { polling: true });
 
 const runCommands = {
   finduser: getWinner,
-  findloser: getLoser,
+  findbestuser: getLoser,
   adduser: registerNewUser,
   stats: showStats,
 };
