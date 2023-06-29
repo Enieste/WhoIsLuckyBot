@@ -25,6 +25,7 @@ export const registerNewUser =
     await updateUser({
       ...uniqWhere,
       username: msg.from.username,
+      firstName: msg.from.first_name,
       status: 'here',
     });
 

@@ -2,7 +2,8 @@ import TelegramBot from 'node-telegram-bot-api';
 import pick from 'lodash/pick';
 import { CleanedMessage, ValidMessage } from './utils/types';
 import { registerNewUser } from './commands/addUser';
-import { pickRandomUser } from './commands/pickRandomUser';
+import { getLoser, getWinner, pickRandomUser } from './commands/pickRandomUser';
+import { showStats } from './commands/showStats';
 
 const token = process.env.TOKEN;
 if (!token) throw new Error('no process.env.TOKEN');
@@ -14,41 +15,11 @@ const BOT_NAME = 'WhoIsLuckyTodayBot';
 
 export const bot = new TelegramBot(token, { polling: true });
 
-// const registerNewUser = async (msg: CleanedMessage) => {
-//   console.log('from register', msg)
-//   const userId = msg.from.id;
-//
-//   const firstName = msg.from.first_name;
-//   const uniqWhere = {
-//     userId,
-//     chatId: msg.chat.id,
-//   };
-//   const existing = await prisma.userChatStats.findUnique({
-//     where: {
-//       userId_chatId: uniqWhere
-//     }
-//   });
-//   if (existing) {
-//     await bot.sendMessage(msg.chat.id, `${firstName}, вы уже в игре.`);
-//     return;
-//   }
-//
-//   await updateUser({
-//     ...uniqWhere,
-//     username: msg.from.username,
-//     status: 'here'
-//   });
-//
-//   return bot.sendMessage(msg.chat.id, `${firstName}, добро пожаловать в игру. Осталось только дождаться...`);
-// };
-
 const runCommands = {
-  finduser: pickRandomUser,
+  finduser: getWinner,
+  findloser: getLoser,
   adduser: registerNewUser,
-  stat_user: (bot: TelegramBot) => (message: CleanedMessage) =>
-    'show statistics',
-  loser: (bot: TelegramBot) => (message: CleanedMessage) => 'find loser',
-  stat_loser: (bot: TelegramBot) => (message: CleanedMessage) => 'stat losers',
+  stats: showStats,
 };
 
 const ACCEPTED_COMMANDS = Object.keys(

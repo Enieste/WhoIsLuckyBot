@@ -8,21 +8,38 @@ datasource db {
 }
 
 model Chat {
-  id             Int             @id @default(autoincrement())
-  currentUserId  Int?
-  currentLoserId Int?
-  lastDrawDate   DateTime?
-  UserChatStats  UserChatStats[]
+  id                   Int                    @id @default(autoincrement())
+  currentUserId        Int?
+  currentLoserId       Int?
+  lastWinnerDrawDate   DateTime?
+  lastLoserDrawDate    DateTime?
+  UserChatStats        UserChatStats[]
+  UserChatStats_dg_tmp UserChatStats_dg_tmp[]
 }
 
 model UserChatStats {
-  userId             Int
-  chatId             Int
-  username_transient String?
-  userCount          Int
-  loserCount         Int
-  deactivated_at     DateTime?
-  chat               Chat      @relation(fields: [chatId], references: [id])
+  userId              Int
+  chatId              Int
+  username_transient  String?
+  userCount           Int
+  loserCount          Int
+  deactivated_at      DateTime?
+  firstName_transient String?
+  chat                Chat      @relation(fields: [chatId], references: [id])
+
+  @@id([userId, chatId])
+}
+
+model UserChatStats_dg_tmp {
+  userId              Int
+  chatId              Int
+  username_transient  String?
+  userCount           Int
+  loserCount          Int
+  deactivated_at      DateTime?
+  firstName_transient String?
+  column_name         Int?
+  Chat                Chat      @relation(fields: [chatId], references: [id])
 
   @@id([userId, chatId])
 }

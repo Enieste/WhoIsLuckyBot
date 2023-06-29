@@ -6,3 +6,6 @@ export type ValidMessage = Omit<TelegramBot.Message, 'from'> & {
 };
 // no command and metadata anymore
 export type CleanedMessage = Pick<ValidMessage, 'from' | 'chat' | 'date'>;
+export const LOSER = 'loser';
+export const WINNER = 'winner';
+export type Designation = typeof LOSER | typeof WINNER;
