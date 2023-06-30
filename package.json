@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "heroku-postbuild": "npm install --prefix dist/user-of-the-day",
-    "build": "nx build",
-    "test": "nx test"
+    "build": "nx prisma-generate user-of-the-day && nx build user-of-the-day",
+    "start": "node dist/user-of-the-day/main.js"
   },
   "private": true,
   "dependencies": {
