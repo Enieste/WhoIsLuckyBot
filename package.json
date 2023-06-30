@@ -19,7 +19,8 @@
     "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.61.0",
     "sqlite3": "^5.1.6",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "prisma": "^4.15.0"
   },
   "devDependencies": {
     "@nx-tools/nx-prisma": "^4.0.3",
@@ -43,7 +44,6 @@
     "jest-environment-node": "^29.4.1",
     "nx": "16.3.2",
     "prettier": "^2.6.2",
-    "prisma": "^4.15.0",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "typescript": "~5.0.2"
