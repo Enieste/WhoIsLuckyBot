@@ -5,8 +5,8 @@
   "scripts": {
     "heroku-prebuild": "npm install && npx nx prisma-generate user-of-the-day",
     "heroku-postbuild": "npm install --prefix dist/user-of-the-day",
-    "build": "npx nx prisma-generate user-of-the-day && npx nx build user-of-the-day",
-    "start": "node dist/user-of-the-day/main.js"
+    "build": "npx nx build user-of-the-day",
+    "start": "ls -la && node dist/user-of-the-day/main.js"
   },
   "private": true,
   "dependencies": {
