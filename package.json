@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "heroku-prebuild": "npm install && npx nx prisma-generate user-of-the-day",
-    "heroku-postbuild": "npx nx build user-of-the-day && npm install --prefix dist/user-of-the-day",
+    "heroku-postbuild": "npx nx prisma-generate user-of-the-day && npx nx build user-of-the-day && npm install --prefix dist/user-of-the-day",
     "start": "ls -la dist/user-of-the-day && node dist/user-of-the-day/main.js"
   },
   "private": true,
