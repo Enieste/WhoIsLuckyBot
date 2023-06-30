@@ -80,3 +80,4 @@ bot.on("message", (msg) => {
 0 && (module.exports = {
   bot
 });
+//# sourceMappingURL=bot.js.map

@@ -29,3 +29,4 @@ const WINNER = "winner";
   LOSER,
   WINNER
 });
+//# sourceMappingURL=types.js.map

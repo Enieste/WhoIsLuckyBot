@@ -58,3 +58,4 @@ const showStats = (bot) => async (msg) => {
 0 && (module.exports = {
   showStats
 });
+//# sourceMappingURL=showStats.js.map

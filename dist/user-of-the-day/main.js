@@ -41,3 +41,4 @@ function isFile(s) {
   }
 }
 require("./user-of-the-day/src/main.js");
+//# sourceMappingURL=main.js.map

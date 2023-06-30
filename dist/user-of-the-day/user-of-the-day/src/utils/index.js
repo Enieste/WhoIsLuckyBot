@@ -35,3 +35,4 @@ const capitalize = (s) => {
   capitalize,
   getRandomFromNumber
 });
+//# sourceMappingURL=index.js.map

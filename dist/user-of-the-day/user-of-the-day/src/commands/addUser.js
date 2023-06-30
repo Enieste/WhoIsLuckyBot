@@ -54,3 +54,4 @@ const registerNewUser = (bot) => async (msg) => {
 0 && (module.exports = {
   registerNewUser
 });
+//# sourceMappingURL=addUser.js.map
