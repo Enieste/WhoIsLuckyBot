@@ -103,7 +103,7 @@ export const addCustomChatSearchMessages = async ({
     where: {
       id: chatId,
     },
-    create: setMessageObg,
+    create: { ...setMessageObg, id: chatId },
     update: setMessageObg,
   });
 };
