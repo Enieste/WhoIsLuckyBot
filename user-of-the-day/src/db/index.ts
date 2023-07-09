@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { LOSER, Designation } from '../utils/types';
+import { LOSER, Designation, WINNER } from '../utils/types';
 
 const dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) throw new Error('process.env.DATABASE_URL is empty');
 export const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.DATABASE_URL
+      url: process.env.DATABASE_URL,
     },
   },
 });
@@ -57,28 +57,53 @@ export const updateUser = async ({
   });
 };
 
-export const addCount = (tx: Pick<PrismaClient, 'userChatStats'>) => async ({
-  userId,
-  chatId,
-  title,
-}: {
-  userId: bigint;
-  chatId: bigint;
-  title: Designation;
-}) => {
-  const uniqWhere = {
+export const addCount =
+  (tx: Pick<PrismaClient, 'userChatStats'>) =>
+  async ({
     userId,
     chatId,
+    title,
+  }: {
+    userId: bigint;
+    chatId: bigint;
+    title: Designation;
+  }) => {
+    const uniqWhere = {
+      userId,
+      chatId,
+    };
+    const increment1 = { increment: 1 };
+    await tx.userChatStats.update({
+      where: {
+        userId_chatId: uniqWhere,
+      },
+      data: {
+        ...(title === LOSER
+          ? { loserCount: increment1 }
+          : { userCount: increment1 }),
+      },
+    });
   };
-  const increment1 = { increment: 1 };
-  await tx.userChatStats.update({
+
+export const addCustomChatSearchMessages = async ({
+  chatId,
+  tag,
+  messagesString,
+}: {
+  chatId: number;
+  tag: string;
+  messagesString: string;
+}) => {
+  const msg = messagesString ? messagesString : null;
+  const setMessageObg = {
+    ...(tag === WINNER ? { userSearchMessage: msg } : {}),
+    ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
+  };
+  await prisma.chat.upsert({
     where: {
-      userId_chatId: uniqWhere,
+      id: chatId,
     },
-    data: {
-      ...(title === LOSER
-        ? { loserCount: increment1 }
-        : { userCount: increment1 }),
-    },
+    create: setMessageObg,
+    update: setMessageObg,
   });
 };
