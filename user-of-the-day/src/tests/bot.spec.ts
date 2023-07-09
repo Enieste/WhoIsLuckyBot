@@ -14,6 +14,22 @@ describe('parseMessage', () => {
     expect(result).toEqual(expected);
   });
 
+  it('should parse the command if no bot name and extra text given', () => {
+    const text = `/help`;
+    const expected = {
+      command: 'help',
+      messageAfterCommand: '',
+    }
+  })
+
+  it('should parse the command if no bot name and extra text given', () => {
+    const text = `/help Me | please`;
+    const expected = {
+      command: 'help',
+      messageAfterCommand: 'Me | please',
+    }
+  })
+
   it('should correctly parse the command without message after command', () => {
     const text = `/help@${BOT_NAME}`;
     const expected = {

@@ -2,7 +2,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import type { CleanedMessage, Designation } from '../utils/types';
 import { LOSER, WINNER } from '../utils/types';
 import { addCount, prisma, updateUser } from '../db';
-import { capitalize, getRandomFromNumber } from '../utils';
+import { getRandomFromNumber } from '../utils';
 import { isEqual, startOfDay } from 'date-fns';
 import { sendSearchMessages } from './setMessage';
 
@@ -42,8 +42,6 @@ export const pickRandomUser =
           id: msg.chat.id,
         },
       });
-
-      console.log('chat', chat);
 
       const fieldToCheck = designationToLastDrawDateField(title);
       const lastDrawDate = chat && chat[fieldToCheck];
@@ -160,13 +158,13 @@ const getDude =
     }
     await bot.sendMessage(
       msg.chat.id,
-      `${messagePrefix} — ${
+      `${
         selectedDude.member.user.username
-          ? `${selectedDude.member.user.first_name} (@${selectedDude.member.user.username})`
-          : `${selectedDude.member.user.first_name}`
+          ? `${selectedDude.member.user.first_name} (@${selectedDude.member.user.username}) назначается ${messagePrefix}`
+          : `${selectedDude.member.user.first_name} назначается ${messagePrefix}`
       }`
     );
   };
 
-export const getWinner = getDude(WINNER, '🐈 Котик дня');
-export const getLoser = getDude(LOSER, `🌈 ${capitalize(loserTitle)} дня`);
+export const getWinner = getDude(WINNER, 'котиком дня 🐈');
+export const getLoser = getDude(LOSER, `${loserTitle}ом дня 🌈`);
