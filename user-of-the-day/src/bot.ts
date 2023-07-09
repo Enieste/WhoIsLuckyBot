@@ -5,6 +5,7 @@ import { registerNewUser } from './commands/addUser';
 import { getLoser, getWinner } from './commands/pickRandomUser';
 import { showStats } from './commands/showStats';
 import { setFindLoserMessage, setFindUserMessage } from "./commands/setMessage";
+import {sendAllCommands} from "./commands/sendAllCommands";
 
 const token = process.env.TOKEN;
 
@@ -23,12 +24,25 @@ const runCommands = {
   adduser: registerNewUser,
   stats: showStats,
   setFindUserMessage: setFindUserMessage,
-  setFindBestUserMessage:setFindLoserMessage
+  setFindBestUserMessage:setFindLoserMessage,
+  help: sendAllCommands,
 };
 
 const ACCEPTED_COMMANDS = Object.keys(
   runCommands
 ) as (keyof typeof runCommands)[];
+
+export const parseMessage = (text: string): { command: string, messageAfterCommand: string } => {
+  const indexOfBotName = text.indexOf(`@${BOT_NAME}`);
+  const indexOfExtraText = text.indexOf(' ');
+  // command to cut /command@botname or /command" "with extra text
+  const command = text.substring(
+    1,
+    indexOfBotName === -1 ? (indexOfExtraText !== -1 ? indexOfExtraText : undefined) : indexOfBotName
+  );
+  const messageAfterCommand = indexOfExtraText !== -1 ? text.substring(indexOfExtraText).trim() : '';
+  return { command, messageAfterCommand }
+};
 
 // Listen for any kind of message. There are different kinds of
 // messages.
@@ -43,14 +57,7 @@ bot.on('message', (msg) => {
     console.log("Message isn't command", msg);
     return;
   }
-
-  const indexOfBotName = msg.text.indexOf(`@${BOT_NAME}`);
-  const spaceIndex = msg.text.indexOf(' ');
-  const command = msg.text.substring(
-    1,
-    indexOfBotName === -1 ? (spaceIndex !== -1 ? spaceIndex : undefined) : indexOfBotName
-  );
-  const messageAfterCommand = spaceIndex !== -1 ? msg.text.substring(spaceIndex).trim() : '';
+  const { command, messageAfterCommand } = parseMessage(msg.text);
   const isCommandAccepted = (
     command: string
   ): command is (typeof ACCEPTED_COMMANDS)[number] =>

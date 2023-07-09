@@ -25,10 +25,12 @@ export const sendSearchMessages = async (bot :TelegramBot, chatId: TelegramBot.C
   }
 }
 
-type ProperRight = 'creator' | 'administrator';
-function doesHasRight(value: string): value is ProperRight {
-  return ['creator', 'administrator'].includes(value);
-}
+const TELEGRAM_GROUP_CREATOR = 'creator' as const; // // from telegram api
+const TELEGRAM_GROUP_ADMINISTRATOR = 'administrator' as const; // // from telegram api
+const GROUPS_WITH_RIGHTS = [TELEGRAM_GROUP_CREATOR, TELEGRAM_GROUP_ADMINISTRATOR] as const;
+type AcceptedPermission = typeof GROUPS_WITH_RIGHTS[number];
+
+const hasPermissions = (s: TelegramBot.ChatMemberStatus): s is AcceptedPermission => GROUPS_WITH_RIGHTS.includes(s as AcceptedPermission)
 
 let settingNewMessage = false;
 const setMessage =
@@ -38,8 +40,9 @@ const setMessage =
         if (settingNewMessage) return;
         settingNewMessage = true;
         const user = await bot.getChatMember(msg.chat.id, msg.from.id);
-        if (!doesHasRight(user.status)) {
+        if (!hasPermissions(user.status)) {
           await bot.sendMessage(msg.chat.id, 'Команда доступна только администраторам канала 🤓');
+          settingNewMessage = false;
           return;
         }
         await addCustomChatSearchMessages({ chatId: msg.chat.id, tag, messagesString: msg.text as string });
