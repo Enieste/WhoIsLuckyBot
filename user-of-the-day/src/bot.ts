@@ -14,7 +14,7 @@ if (!token) throw new Error('no process.env.TOKEN');
 const cleanMsgObj = (msg: ValidMessage): CleanedMessage =>
   pick(msg, ['from', 'chat', 'date', 'text'] as const);
 
-const BOT_NAME =  process.env.BOT_NAME;
+const BOT_NAME = process.env.BOT_NAME;
 
 export const bot = new TelegramBot(token, { polling: true });
 
@@ -24,7 +24,7 @@ const runCommands = {
   adduser: registerNewUser,
   stats: showStats,
   setFindUserMessage: setFindUserMessage,
-  setFindBestUserMessage:setFindLoserMessage,
+  setFindBestUserMessage: setFindLoserMessage,
   help: sendAllCommands,
 };
 
@@ -32,16 +32,23 @@ const ACCEPTED_COMMANDS = Object.keys(
   runCommands
 ) as (keyof typeof runCommands)[];
 
-export const parseMessage = (text: string): { command: string, messageAfterCommand: string } => {
+export const parseMessage = (
+  text: string
+): { command: string; messageAfterCommand: string } => {
   const indexOfBotName = text.indexOf(`@${BOT_NAME}`);
   const indexOfExtraText = text.indexOf(' ');
   // cutting command from /command@botname or /command" "with extra text
   const command = text.substring(
     1,
-    indexOfBotName === -1 ? (indexOfExtraText !== -1 ? indexOfExtraText : undefined) : indexOfBotName
+    indexOfBotName === -1
+      ? indexOfExtraText !== -1
+        ? indexOfExtraText
+        : undefined
+      : indexOfBotName
   );
-  const messageAfterCommand = indexOfExtraText !== -1 ? text.substring(indexOfExtraText).trim() : '';
-  return { command, messageAfterCommand }
+  const messageAfterCommand =
+    indexOfExtraText !== -1 ? text.substring(indexOfExtraText).trim() : '';
+  return { command, messageAfterCommand };
 };
 
 // Listen for any kind of message. There are different kinds of

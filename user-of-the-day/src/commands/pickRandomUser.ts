@@ -1,10 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
-import type {CleanedMessage, Designation} from '../utils/types';
-import {LOSER, WINNER} from '../utils/types';
-import {addCount, prisma, updateUser} from '../db';
-import {capitalize, getRandomFromNumber} from '../utils';
-import {isEqual, startOfDay} from 'date-fns';
-import {sendSearchMessages} from "./setMessage";
+import type { CleanedMessage, Designation } from '../utils/types';
+import { LOSER, WINNER } from '../utils/types';
+import { addCount, prisma, updateUser } from '../db';
+import { capitalize, getRandomFromNumber } from '../utils';
+import { isEqual, startOfDay } from 'date-fns';
+import { sendSearchMessages } from './setMessage';
 
 let pickingUserNow = false;
 const loserTitle = process.env.LOSER_TITLE || 'неудачник';
@@ -43,7 +43,7 @@ export const pickRandomUser =
         },
       });
 
-      console.log('chat', chat)
+      console.log('chat', chat);
 
       const fieldToCheck = designationToLastDrawDateField(title);
       const lastDrawDate = chat && chat[fieldToCheck];
@@ -58,7 +58,9 @@ export const pickRandomUser =
       if (tries === 0) {
         await bot.sendMessage(
           msg.chat.id,
-          `Начинаю поиск ${title === LOSER ? loserTitle + 'a' : 'котика'} дня...`
+          `Начинаю поиск ${
+            title === LOSER ? loserTitle + 'a' : 'котика'
+          } дня...`
         );
         if (title === LOSER && chat && chat.loserSearchMessage) {
           await sendSearchMessages(bot, msg.chat.id, chat.loserSearchMessage);
@@ -123,7 +125,10 @@ export const pickRandomUser =
           message: 'No users to choose from',
         };
 
-      const selectedUser = await bot.getChatMember(chatId, Number(randomUserId));
+      const selectedUser = await bot.getChatMember(
+        chatId,
+        Number(randomUserId)
+      );
       if (selectedUser.status === 'left') {
         await updateUser({
           userId: selectedUser.user.id,
