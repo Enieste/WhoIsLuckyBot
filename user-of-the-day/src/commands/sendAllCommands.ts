@@ -1,5 +1,5 @@
-import TelegramBot from "node-telegram-bot-api";
-import { CleanedMessage } from "../utils/types";
+import TelegramBot from 'node-telegram-bot-api';
+import { CleanedMessage } from '../utils/types';
 
 const opts: TelegramBot.SendMessageOptions = {
   parse_mode: 'Markdown'

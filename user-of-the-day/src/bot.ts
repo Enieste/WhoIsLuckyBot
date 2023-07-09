@@ -4,8 +4,8 @@ import { CleanedMessage, ValidMessage } from './utils/types';
 import { registerNewUser } from './commands/addUser';
 import { getLoser, getWinner } from './commands/pickRandomUser';
 import { showStats } from './commands/showStats';
-import { setFindLoserMessage, setFindUserMessage } from "./commands/setMessage";
-import {sendAllCommands} from "./commands/sendAllCommands";
+import { setFindLoserMessage, setFindUserMessage } from './commands/setMessage';
+import { sendAllCommands } from './commands/sendAllCommands';
 
 const token = process.env.TOKEN;
 
@@ -35,7 +35,7 @@ const ACCEPTED_COMMANDS = Object.keys(
 export const parseMessage = (text: string): { command: string, messageAfterCommand: string } => {
   const indexOfBotName = text.indexOf(`@${BOT_NAME}`);
   const indexOfExtraText = text.indexOf(' ');
-  // command to cut /command@botname or /command" "with extra text
+  // cutting command from /command@botname or /command" "with extra text
   const command = text.substring(
     1,
     indexOfBotName === -1 ? (indexOfExtraText !== -1 ? indexOfExtraText : undefined) : indexOfBotName
