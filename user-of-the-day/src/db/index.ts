@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { LOSER, Designation } from '../utils/types';
+import {LOSER, Designation, WINNER} from '../utils/types';
 
 const dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) throw new Error('process.env.DATABASE_URL is empty');
@@ -79,6 +79,31 @@ export const addCount = (tx: Pick<PrismaClient, 'userChatStats'>) => async ({
       ...(title === LOSER
         ? { loserCount: increment1 }
         : { userCount: increment1 }),
+    },
+  });
+};
+
+export const addCustomChatSearchMessages = async ({
+  chatId,
+  tag,
+  messagesString
+}: {
+  chatId: number;
+  tag: string;
+  messagesString: string;
+}) => {
+  const msg = messagesString ? messagesString : null;
+  await prisma.chat.upsert({
+    where: {
+      id: chatId,
+    },
+    create: {
+      ...(tag === WINNER ? { userSearchMessage: msg } : {}),
+      ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
+    },
+    update: {
+      ...(tag === WINNER ? { userSearchMessage: msg } : {}),
+      ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
     },
   });
 };

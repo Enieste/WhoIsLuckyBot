@@ -1,9 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
-import type { CleanedMessage, Designation } from '../utils/types';
-import { LOSER, WINNER } from '../utils/types';
-import { addCount, prisma, updateUser } from '../db';
+import type {CleanedMessage, Designation} from '../utils/types';
+import {LOSER, WINNER} from '../utils/types';
+import {addCount, prisma, updateUser} from '../db';
 import {capitalize, getRandomFromNumber} from '../utils';
-import { startOfDay, isEqual } from 'date-fns';
+import {isEqual, startOfDay} from 'date-fns';
+import {sendSearchMessages} from "./setMessage";
 
 let pickingUserNow = false;
 const loserTitle = process.env.LOSER_TITLE || 'неудачник';
@@ -32,7 +33,8 @@ export const pickRandomUser =
     title: Designation
   ): Promise<RandomUserPickResult> => {
     const getRandomUserForChat = async (
-      chatId: bigint
+      chatId: bigint,
+      tries: number
     ): Promise<bigint | null> => {
       // cache logic
       const chat = await prisma.chat.findUnique({
@@ -40,6 +42,8 @@ export const pickRandomUser =
           id: msg.chat.id,
         },
       });
+
+      console.log('chat', chat)
 
       const fieldToCheck = designationToLastDrawDateField(title);
       const lastDrawDate = chat && chat[fieldToCheck];
@@ -51,10 +55,18 @@ export const pickRandomUser =
       }
       // ^ cache logic
 
-      await bot.sendMessage(
-        msg.chat.id,
-        `Начинаю поиск ${title === LOSER ? loserTitle + 'a' : 'котика'} дня...`
-      );
+      if (tries === 0) {
+        await bot.sendMessage(
+          msg.chat.id,
+          `Начинаю поиск ${title === LOSER ? loserTitle + 'a' : 'котика'} дня...`
+        );
+        if (title === LOSER && chat && chat.loserSearchMessage) {
+          await sendSearchMessages(bot, msg.chat.id, chat.loserSearchMessage);
+        } else if (title === WINNER && chat && chat.userSearchMessage) {
+          await sendSearchMessages(bot, msg.chat.id, chat.userSearchMessage);
+        }
+      }
+
       const gameParticipants = await prisma.userChatStats.findMany({
         where: {
           chatId: chatId,
@@ -104,7 +116,7 @@ export const pickRandomUser =
           message: 'Sorry no users found',
         };
       const chatId = msg.chat.id;
-      const randomUserId = await getRandomUserForChat(BigInt(chatId));
+      const randomUserId = await getRandomUserForChat(BigInt(chatId), tries);
       if (randomUserId === null)
         return {
           tag: 'error',

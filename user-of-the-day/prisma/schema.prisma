@@ -13,6 +13,8 @@ model Chat {
   currentLoserId       BigInt?
   lastWinnerDrawDate   DateTime?
   lastLoserDrawDate    DateTime?
+  userSearchMessage    String?
+  loserSearchMessage   String?
   UserChatStats        UserChatStats[]
 }
 
