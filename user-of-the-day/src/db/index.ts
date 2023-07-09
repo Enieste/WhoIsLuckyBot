@@ -93,17 +93,15 @@ export const addCustomChatSearchMessages = async ({
   messagesString: string;
 }) => {
   const msg = messagesString ? messagesString : null;
+  const setMessageObg = {
+    ...(tag === WINNER ? { userSearchMessage: msg } : {}),
+    ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
+  };
   await prisma.chat.upsert({
     where: {
       id: chatId,
     },
-    create: {
-      ...(tag === WINNER ? { userSearchMessage: msg } : {}),
-      ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
-    },
-    update: {
-      ...(tag === WINNER ? { userSearchMessage: msg } : {}),
-      ...(tag === LOSER ? { loserSearchMessage: msg } : {}),
-    },
+    create: setMessageObg,
+    update: setMessageObg,
   });
 };
