@@ -5,6 +5,7 @@ import { addCount, prisma, updateUser } from '../db';
 import { getRandomFromNumber } from '../utils';
 import { isEqual, startOfDay } from 'date-fns';
 import { sendSearchMessages } from './setMessage';
+import { UserChatStats } from "@prisma/client";
 
 let pickingUserNow = false;
 const loserTitle = process.env.LOSER_TITLE || 'неудачник';
@@ -16,7 +17,7 @@ type RandomUserPickResult =
     }
   | {
       tag: 'success';
-      member: TelegramBot.ChatMember;
+      member: UserChatStats;
     };
 
 const designationToIdField = (d: Designation) =>
@@ -125,20 +126,36 @@ export const pickRandomUser =
 
       console.log('chatId / randomUserId', chatId, Number(randomUserId))
 
-      const selectedUser = await bot.getChatMember(
-        chatId,
-        Number(randomUserId)
-      );
-      if (selectedUser.status === 'left') {
-        await updateUser({
-          userId: selectedUser.user.id,
-          chatId,
-          username: selectedUser.user.username,
-          firstName: selectedUser.user.first_name,
-          status: 'gone',
-        });
-        await recurse(msg, tries + 1);
+      // const selectedUser = await bot.getChatMember(
+      //   chatId,
+      //   Number(randomUserId)
+      // ); Telegram bot forgets users eventually and cannot catch their data. Only errors.
+
+      const selectedUser = await prisma.userChatStats.findFirst({
+        where: {
+          userId: Number(randomUserId),
+          chatId: chatId
+        },
+      });
+
+      if (selectedUser === null) {
+        return {
+          tag: 'error',
+          message: 'Пользователь не найдет',
+        };
       }
+
+      // if (selectedUser.status === 'left') {
+      //   await updateUser({
+      //     userId: selectedUser.user.id,
+      //     chatId,
+      //     username: selectedUser.user.username,
+      //     firstName: selectedUser.user.first_name,
+      //     status: 'gone',
+      //   });
+      //   await recurse(msg, tries + 1);
+      // }   Telegram gives an error if user is not in the chat anymore
+
       return {
         tag: 'success',
         member: selectedUser,
@@ -161,9 +178,9 @@ const getDude =
     await bot.sendMessage(
       msg.chat.id,
       `${
-        selectedDude.member.user.username
-          ? `${selectedDude.member.user.first_name} (@${selectedDude.member.user.username}) назначается ${messagePrefix}`
-          : `${selectedDude.member.user.first_name} назначается ${messagePrefix}`
+        selectedDude.member.username_transient
+          ? `${selectedDude.member.firstName_transient} (@${selectedDude.member.username_transient}) назначается ${messagePrefix}`
+          : `${selectedDude.member.firstName_transient} назначается ${messagePrefix}`
       }`
     );
   };
