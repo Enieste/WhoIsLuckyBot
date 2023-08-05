@@ -131,17 +131,21 @@ export const pickRandomUser =
       //   Number(randomUserId)
       // ); Telegram bot forgets users eventually and cannot catch their data. Only errors.
 
-      const selectedUser = await prisma.userChatStats.findFirst({
+      const uniqWhere = {
+        userId: randomUserId,
+        chatId
+      };
+
+      const selectedUser = await prisma.userChatStats.findUnique({
         where: {
-          userId: Number(randomUserId),
-          chatId: chatId
+          userId_chatId: uniqWhere
         },
       });
 
       if (selectedUser === null) {
         return {
           tag: 'error',
-          message: 'Пользователь не найдет',
+          message: 'Пользователь не найден',
         };
       }
 
