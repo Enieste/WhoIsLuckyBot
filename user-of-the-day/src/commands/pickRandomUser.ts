@@ -123,7 +123,7 @@ export const pickRandomUser =
           message: 'No users to choose from',
         };
 
-      console.log('chatId / randomUserId', chatId, randomUserId)
+      console.log('chatId / randomUserId', chatId, Number(randomUserId))
 
       const selectedUser = await bot.getChatMember(
         chatId,
